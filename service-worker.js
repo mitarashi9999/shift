@@ -1,10 +1,13 @@
-const CACHE_NAME = 'shift-app-v1';
+const CACHE_NAME = 'shift-app-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './styles.css',
   './app.js',
-  './manifest.json'
+  './manifest.json',
+  './worker.html',
+  './worker.css',
+  './worker.js'
 ];
 
 self.addEventListener('install', (event) => {
