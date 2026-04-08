@@ -4,6 +4,7 @@
 
 let employees = [];
 let shifts = [];
+let messages = [];
 let currentUser = null;
 let currentViewDate = new Date(); // カレンダーで表示中の月
 
@@ -38,6 +39,11 @@ function loadData() {
         localStorage.setItem('shift_shifts', JSON.stringify(shifts));
     } else {
         shifts = JSON.parse(loadedShifts);
+    }
+
+    const loadedMessages = localStorage.getItem('shift_messages');
+    if (loadedMessages) {
+        messages = JSON.parse(loadedMessages);
     }
 }
 
@@ -105,6 +111,54 @@ function initUI() {
         currentViewDate.setMonth(currentViewDate.getMonth() + 1);
         renderCalendar();
     });
+
+    // メッセージモーダルイベント
+    const messagesBtn = document.getElementById('messages-btn');
+    const messagesModal = document.getElementById('messages-modal');
+    const closeMessagesBtn = document.getElementById('close-messages-btn');
+
+    if (messagesBtn && messagesModal) {
+        messagesBtn.addEventListener('click', () => {
+            renderMessages();
+            messagesModal.showModal();
+        });
+
+        closeMessagesBtn.addEventListener('click', () => {
+            messagesModal.close();
+        });
+
+        messagesModal.addEventListener('click', (e) => {
+            if (e.target === messagesModal) messagesModal.close();
+        });
+    }
+}
+
+// ========== メッセージ表示 ==========
+function formatDateTime(ts) {
+    const d = new Date(ts);
+    return `${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+}
+
+function renderMessages() {
+    const list = document.getElementById('messages-list');
+    if (!list || !currentUser) return;
+
+    // 自分宛て または 全員宛て をフィルタして新しい順にソート
+    const myMessages = messages
+        .filter(m => m.to === 'all' || m.to === currentUser.id)
+        .sort((a, b) => b.timestamp - a.timestamp);
+
+    if (myMessages.length === 0) {
+        list.innerHTML = '<div style="text-align:center; color:var(--text-secondary); padding: 20px;">お知らせはありません</div>';
+        return;
+    }
+
+    list.innerHTML = myMessages.map(m => `
+        <div class="msg-item ${m.to === 'all' ? 'msg-all' : ''}">
+            <span class="msg-time">${formatDateTime(m.timestamp)} ${m.to === 'all' ? '(全員共通)' : '(あなた宛)'}</span>
+            <div class="msg-text">${m.content}</div>
+        </div>
+    `).join('');
 }
 
 function showCalendarView() {

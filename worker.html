@@ -37,6 +37,7 @@
                 <div class="user-info">
                     <span class="user-avatar">👤</span>
                     <span id="current-user-name">ゲスト</span>
+                    <button id="messages-btn" class="icon-btn" title="お知らせ">🔔</button>
                     <button id="logout-btn" class="icon-btn logout-btn" title="別の人に切り替える">⎋</button>
                 </div>
                 <div class="month-selector">
@@ -57,6 +58,19 @@
         </section>
 
     </div>
+
+    <!-- === メッセージモーダル === -->
+    <dialog id="messages-modal" class="glass-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>お知らせ・メッセージ</h3>
+                <button id="close-messages-btn" class="icon-btn close-modal-btn">×</button>
+            </div>
+            <div id="messages-list" class="messages-list">
+                <!-- JSでメッセージが入る -->
+            </div>
+        </div>
+    </dialog>
 
     <script src="worker.js" defer></script>
 </body>
