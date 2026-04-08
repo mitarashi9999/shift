@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>シフト管理アプリ (シェアサイクル)</title>
+    <!-- 必要なフォント -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <header class="topbar">
+        <div class="logo">🚲 バッテリー交換シフト管理</div>
+        <div class="topbar-actions">
+            <span id="network-status" class="status online">Online</span>
+            <button id="theme-toggle" class="icon-btn" aria-label="テーマ切替">🌙</button>
+        </div>
+    </header>
+
+    <div class="app-layout">
+        <!-- 従業員管理サイドバー -->
+        <aside class="sidebar" id="employee-sidebar">
+            <div class="sidebar-header">
+                <h2>従業員一覧</h2>
+                <button id="add-employee-btn" class="btn primary-btn">+ 追加</button>
+            </div>
+            <div class="sidebar-content">
+                <ul id="employee-list" class="employee-list">
+                    <!-- JSで動的生成 -->
+                </ul>
+            </div>
+        </aside>
+
+        <!-- メインカレンダービュー -->
+        <main class="main-content">
+            <div class="calendar-toolbar">
+                <div class="view-toggles">
+                    <button id="view-day" class="btn toggle-btn">1日</button>
+                    <button id="view-week" class="btn toggle-btn active">週間</button>
+                </div>
+                <div class="date-controls">
+                    <button id="prev-date" class="icon-btn">◀</button>
+                    <h2 id="current-date-display">2026年3月</h2>
+                    <button id="next-date" class="icon-btn">▶</button>
+                    <button id="today-btn" class="btn outline-btn">今日</button>
+                </div>
+            </div>
+            
+            <div class="calendar-container">
+                <div id="calendar-grid" class="calendar-grid week-view">
+                    <!-- JSで動的生成 -->
+                </div>
+            </div>
+        </main>
+
+        <!-- チャット機能 -->
+        <aside class="chat-panel">
+            <div class="chat-header">
+                <h2>連絡室</h2>
+            </div>
+            <div class="chat-history" id="chat-history">
+                <!-- JSで動的生成 -->
+            </div>
+            <div class="chat-input-area">
+                <select id="chat-recipient" class="chat-select">
+                    <option value="all">全員へ</option>
+                    <!-- 従業員オプションを動的生成 -->
+                </select>
+                <div class="input-group">
+                    <input type="text" id="chat-input" placeholder="メッセージを入力...">
+                    <button id="send-btn" class="btn primary-btn">送信</button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- モーダル: 従業員追加 -->
+    <dialog id="employee-modal" class="modal">
+        <div class="modal-content">
+            <h3>従業員を追加</h3>
+            <form id="employee-form">
+                <div class="form-group">
+                    <label for="emp-name">名前</label>
+                    <input type="text" id="emp-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="emp-id">従業員ID</label>
+                    <input type="text" id="emp-id" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn close-modal-btn">キャンセル</button>
+                    <button type="submit" class="btn primary-btn">保存</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- モーダル: シフト追加・編集 -->
+    <dialog id="shift-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="shift-modal-title">シフトを登録</h3>
+            <form id="shift-form">
+                <input type="hidden" id="shift-id">
+                <div class="form-group">
+                    <label for="shift-date">日付</label>
+                    <input type="date" id="shift-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="shift-employee">従業員</label>
+                    <select id="shift-employee" required>
+                        <!-- 動的生成 -->
+                    </select>
+                </div>
+                <div class="form-group time-group">
+                    <div>
+                        <label for="shift-start">開始</label>
+                        <input type="time" id="shift-start" required>
+                    </div>
+                    <span>〜</span>
+                    <div>
+                        <label for="shift-end">終了</label>
+                        <input type="time" id="shift-end" required>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn close-modal-btn">キャンセル</button>
+                    <button type="button" id="delete-shift-btn" class="btn danger-btn hidden">削除</button>
+                    <button type="submit" class="btn primary-btn">保存</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <script src="app.js" defer></script>
+</body>
+</html>

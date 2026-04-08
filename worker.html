@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>マイスケジュール</title>
+    <!-- プレミアムなタイポグラフィ -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="worker.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <!-- 背景用の装飾エレメント -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+    <div class="bg-shape shape-3"></div>
+
+    <div class="app-container">
+        
+        <!-- === ログイン（従業員選択）画面 === -->
+        <section id="login-view" class="view-section active">
+            <div class="glass-card login-card">
+                <h1>My Shift</h1>
+                <p>あなたの名前を選択してください</p>
+                <div class="form-group">
+                    <select id="employee-select" class="premium-select">
+                        <option value="" disabled selected>読み込み中...</option>
+                    </select>
+                </div>
+                <button id="login-btn" class="premium-btn">シフトを確認する</button>
+            </div>
+        </section>
+
+        <!-- === メインカレンダー画面 === -->
+        <section id="calendar-view" class="view-section">
+            <header class="app-header glass-header">
+                <div class="user-info">
+                    <span class="user-avatar">👤</span>
+                    <span id="current-user-name">ゲスト</span>
+                    <button id="logout-btn" class="icon-btn logout-btn" title="別の人に切り替える">⎋</button>
+                </div>
+                <div class="month-selector">
+                    <button id="prev-month" class="icon-btn">❮</button>
+                    <h2 id="current-month-display">2026年 4月</h2>
+                    <button id="next-month" class="icon-btn">❯</button>
+                </div>
+            </header>
+
+            <main class="calendar-container glass-card">
+                <div class="calendar-header-days">
+                    <span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span>
+                </div>
+                <div id="calendar-grid" class="calendar-grid">
+                    <!-- JSで日付セルが挿入されます -->
+                </div>
+            </main>
+        </section>
+
+    </div>
+
+    <script src="worker.js" defer></script>
+</body>
+</html>
