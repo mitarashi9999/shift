@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shift-app-v3';
+const CACHE_NAME = 'shift-app-v4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -35,24 +35,20 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        if (response) {
-          return response;
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+          return networkResponse;
         }
-        return fetch(event.request).then((fetchResponse) => {
-          if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
-            return fetchResponse;
-          }
-          const responseToCache = fetchResponse.clone();
-          caches.open(CACHE_NAME)
-            .then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
-          return fetchResponse;
-        });
+        const responseToCache = networkResponse.clone();
+        caches.open(CACHE_NAME)
+          .then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        return networkResponse;
       }).catch(() => {
         // Offline fallback
+        return caches.match(event.request);
       })
   );
 });

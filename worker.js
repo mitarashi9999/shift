@@ -9,9 +9,73 @@ let currentUser = null;
 let currentViewDate = new Date(); // カレンダーで表示中の月
 
 document.addEventListener('DOMContentLoaded', () => {
+    setupServiceWorker();
     loadData();
     initUI();
+    
+    // 他のタブ（管理者アプリなど）でのlocalStorageの変更を検知してUIを更新する
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'shift_employees' || e.key === 'shift_shifts' || e.key === 'shift_messages') {
+            loadData();
+            updateUIFromStorage();
+        }
+    });
 });
+
+// ========== Storage同期用UI更新 ==========
+function updateUIFromStorage() {
+    const select = document.getElementById('employee-select');
+    const currentVal = select.value;
+    
+    if (employees.length === 0) {
+        select.innerHTML = '<option value="" disabled selected>従業員がいません(管理画面で追加してください)</option>';
+    } else {
+        select.innerHTML = '<option value="" disabled selected>名前を選んでください</option>';
+        employees.forEach(emp => {
+            const option = document.createElement('option');
+            option.value = emp.id;
+            option.textContent = emp.name;
+            select.appendChild(option);
+        });
+        if (currentVal && employees.some(e => e.id === currentVal)) {
+            select.value = currentVal;
+        }
+    }
+
+    if (currentUser) {
+        // 現在のユーザーが削除された場合
+        if (!employees.some(e => e.id === currentUser.id)) {
+            document.getElementById('logout-btn').click();
+            return;
+        }
+        
+        // 名前の変更などを反映
+        currentUser = employees.find(e => e.id === currentUser.id);
+        document.getElementById('current-user-name').textContent = currentUser.name + ' さん';
+        
+        // カレンダー再描画
+        renderCalendar();
+        
+        // メッセージモーダルが開いている場合はメッセージも再描画
+        const messagesModal = document.getElementById('messages-modal');
+        if (messagesModal && messagesModal.open) {
+            renderMessages();
+        }
+    }
+}
+
+// ========== Service Worker & Offline ==========
+function setupServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js').then((registration) => {
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }, (err) => {
+                console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+    }
+}
 
 const DEFAULT_EMPLOYEES = [
     { id: "e1", name: "田中" },
